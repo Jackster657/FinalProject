@@ -109,6 +109,10 @@ namespace FinalProject
                 {
 
                 }
+                if (_location.X > 533)
+                {
+
+                }
 
                 if (diffX <= 134 && diffX >= -134 && diffY <= 53 && diffY>= -53)
                 {
