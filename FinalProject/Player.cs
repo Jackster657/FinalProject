@@ -164,14 +164,21 @@ namespace FinalProject
             spriteBatch.Draw(_playerSkin, _location, Color.White);
 
         }
-        public bool Collide(Rectangle item)
+        public bool Collide(List<Rectangle> items)
         {
-            return _location.Intersects(item);
+            for (int i = 0; i <= items.Count; i++)
+                if (_location.Intersects(items[i]))
+                    return true;
+            return false;
         }
         public void UndoMove()
         {
-            _location.X -= (int)_speed.X;
-            _location.Y -= (int)_speed.Y;
+            if(collide)
+            {
+                _location.X -= (int)_speed.X;
+                _location.Y -= (int)_speed.Y;
+            }
+            
         }
         
     }

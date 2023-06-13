@@ -10,6 +10,7 @@ namespace FinalProject
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         List<Texture2D> pTextures;
+        List<Rectangle> CollisionTextures;
         Texture2D HazUTexture;
         Texture2D HazDTexture;
         Texture2D HazLTexture;
@@ -28,6 +29,8 @@ namespace FinalProject
         Texture2D HazSHNWTexture;
         Texture2D HazSHSETexture;
         Texture2D HazSHSWTexture;
+        Texture2D BackgroudTexture;
+        Rectangle BackgroundRect;
         Player player;
         MouseState mouseState;
         KeyboardState keyboardState;
@@ -43,6 +46,7 @@ namespace FinalProject
         {
             
             pTextures = new List<Texture2D>();
+            CollisionTextures = new List<Rectangle>();
             base.Initialize();
             player = new Player(pTextures, 10, 10);
         }
@@ -67,6 +71,7 @@ namespace FinalProject
             HazSHNWTexture = Content.Load<Texture2D>("HazmatShootNW");
             HazSHSETexture = Content.Load<Texture2D>("HazmatShootSE");
             HazSHSWTexture = Content.Load<Texture2D>("HazmatShootSW");
+            BackgroudTexture = Content.Load<Texture2D>("400Danimated");
 
 
             HazTexture = HazSTexture;
@@ -89,6 +94,13 @@ namespace FinalProject
             pTextures.Add(HazSHSWTexture);//16
 
 
+            CollisionTextures.Add(new Rectangle(0, 0, 450, 60));
+            CollisionTextures.Add(new Rectangle(0,0,160,40));
+            
+
+            BackgroundRect = new Rectangle(0, 0, 800, 480);
+
+
         }
 
         protected override void Update(GameTime gameTime)
@@ -105,7 +117,8 @@ namespace FinalProject
 
 
 
-                player.Update(keyboardState, mouseState);
+            player.Update(keyboardState, mouseState);
+            player.Collide(CollisionTextures);
 
 
             base.Update(gameTime);
@@ -116,6 +129,7 @@ namespace FinalProject
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin();
+            _spriteBatch.Draw(BackgroudTexture, BackgroundRect, Color.White);
             player.Draw(_spriteBatch);
             _spriteBatch.End();
 
