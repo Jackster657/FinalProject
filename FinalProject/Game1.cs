@@ -34,6 +34,8 @@ namespace FinalProject
         Player player;
         MouseState mouseState;
         KeyboardState keyboardState;
+        Texture2D bulletTexture;
+        List<Projectile> projectileList;
 
         public Game1()
         {
@@ -72,6 +74,7 @@ namespace FinalProject
             HazSHSETexture = Content.Load<Texture2D>("HazmatShootSE");
             HazSHSWTexture = Content.Load<Texture2D>("HazmatShootSW");
             BackgroudTexture = Content.Load<Texture2D>("400Danimated");
+            //bulletTexture = Content.Load<Texture2D>("bulletTexture");
 
 
             HazTexture = HazSTexture;
@@ -118,7 +121,7 @@ namespace FinalProject
 
 
             player.Update(keyboardState, mouseState);
-            player.Collide(CollisionTextures);
+            //player.Collide(CollisionTextures);
 
 
             base.Update(gameTime);
@@ -131,6 +134,10 @@ namespace FinalProject
             _spriteBatch.Begin();
             _spriteBatch.Draw(BackgroudTexture, BackgroundRect, Color.White);
             player.Draw(_spriteBatch);
+            //foreach (Projectile bullet in projectileList)
+            //{
+            //    bullet.Draw(_spriteBatch);
+            //}
             _spriteBatch.End();
 
             base.Draw(gameTime);

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,57 +10,42 @@ using System.Threading.Tasks;
 
 namespace FinalProject
 {
-    internal class Projectile
-    {
-        private Texture2D _texture;
-        private Rectangle _location;
-        private Vector2 _speed;
-        SoundEffect _launch;
+    
+        
 
-        public Projectile(Texture2D texture, Rectangle rect, Vector2 speed, SoundEffect launch)
-        {
-            _texture = texture;
-            _location = rect;
-            _speed = speed;
-            _launch = launch;
-        }
 
-        public Texture2D Texture
+    
+        
+        internal class Projectile
         {
+            private Texture2D _texture;
+            private Vector2 _position;
+            private Vector2 _velocity;
+
             
-            get { return _texture; }
-        }
+            Projectile(Texture2D texture, Vector2 position, Vector2 velocity)
+            {
+                _texture = texture;
+                _position = position;
+                _velocity = velocity;
+            }
 
-        public Rectangle Location
-        {
-            get { return _location; }
-            set { _location = value; }
-        }
-
-        public Vector2 Speed
-        {
-            get { return _speed;  }
-        }
-        //public void Move(GraphicsDeviceManager _graphics)
-        //{
-        //    _location.Offset(_speed);
-        //    if (_location.Left < 0 || _location.Right > _graphics.PreferredBackBufferWidth)
-        //    {
+            public void Update(GameTime gameTime)
+            {
+                // Move the bullet based on its velocity
                 
-        //    }
-        //    if (_location.Top < 0 || _location.Bottom > _graphics.PreferredBackBufferHeight)
-        //    {
+                _position += _velocity;
+            }
 
-        //    }
+            public void Draw(SpriteBatch spriteBatch)
+            {
+                // Draw the bullet
+                spriteBatch.Draw(_texture, _position, Color.White);
+            }
+        }
 
-        //}
-        public void PlayLaunch()
-        {
-            _launch.Play();
-        }
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(_texture, _location, Color.White);
-        }
-    }
+       
+    
+
+
 }

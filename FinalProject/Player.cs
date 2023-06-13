@@ -14,9 +14,11 @@ namespace FinalProject
         private List<Texture2D> _playerTextures;
         private Texture2D _playerSkin;
         private Rectangle _location;
+        private Rectangle _shotBox;
         private Vector2 _speed; // _speed.X is horizontal speed, _speed.Y is vertical speed
         private int diffX = 0;
         private int diffY = 0;
+        private Projectile _projectile;
 
 
 
@@ -24,6 +26,7 @@ namespace FinalProject
         {
             _playerTextures = textures;
             _location = new Rectangle(x, y, 40, 60);
+            _shotBox = new Rectangle(_location.X / 2, _location.Y / 2, 1600, 960);
             _speed = new Vector2();
         }
 
@@ -45,6 +48,7 @@ namespace FinalProject
             set { _speed.X = value; }
         }
         
+
         public void Move(KeyboardState keyboardState)
         {
             _speed = new Vector2();
@@ -65,8 +69,10 @@ namespace FinalProject
                 this._speed.Y += 2;
             }
            
-                _location.X += (int)_speed.X;
+            _location.X += (int)_speed.X;
             _location.Y += (int)_speed.Y;
+            _shotBox.X += (int)_speed.X; 
+            _shotBox.Y += (int)_speed.Y;
         }
         public void PickTexture(MouseState mouseState)
         {
@@ -103,58 +109,69 @@ namespace FinalProject
             {
                 //Fix shoot relative to body
 
-                diffX = _location.X - mouseState.X;
-                diffY = _location.Y - mouseState.Y;
-                if (_location.X < 266)
-                {
 
-                }
-                if (_location.X > 533)
-                {
+                //diffX =
+                //diffY = 
+                //if (_location.X < 266)
+                //{
 
-                }
+                //}
+                //if (_location.X > 533)
+                //{
 
-                if (diffX <= 134 && diffX >= -134 && diffY <= 53 && diffY>= -53)
-                {
+                //}
+
+                //if (diffX <= 134 && diffX >= -134 && diffY <= 53 && diffY>= -53)
+                //{
                     
-                }
+                //}
 
-                if (mouseState.X < 266 && mouseState.Y < 160)
-                    _playerSkin = _playerTextures[14];
-                else if (mouseState.X < 266 && mouseState.Y > 320)
-                    _playerSkin = _playerTextures[16];
-                else if (mouseState.X > 533 && mouseState.Y < 160)
-                    _playerSkin = _playerTextures[13];
-                else if (mouseState.X > 533 && mouseState.Y > 320)
-                    _playerSkin = _playerTextures[15];
-                else
-                {
-                    if (mouseState.X < 266 && mouseState.Y > 160 && mouseState.Y < 320)
-                        _playerSkin = _playerTextures[11];
-                    if (mouseState.X > 533 && mouseState.Y > 160 && mouseState.Y < 320)
-                        _playerSkin = _playerTextures[12];
-                    if (mouseState.X < 533 && mouseState.X > 266 && mouseState.Y < 320)
-                        _playerSkin = _playerTextures[9];
-                    if (mouseState.X < 533 && mouseState.X > 266 && mouseState.Y > 160)
-                        _playerSkin = _playerTextures[10];
-                    if (mouseState.X < 533 && mouseState.X > 266 && mouseState.Y > 160 && mouseState.Y < 320)
-                        _playerSkin = _playerTextures[9];
-                }
+                //if (mouseState.X < 266 && mouseState.Y < 160)
+                //    _playerSkin = _playerTextures[14];
+                //else if (mouseState.X < 266 && mouseState.Y > 320)
+                //    _playerSkin = _playerTextures[16];
+                //else if (mouseState.X > 533 && mouseState.Y < 160)
+                //    _playerSkin = _playerTextures[13];
+                //else if (mouseState.X > 533 && mouseState.Y > 320)
+                //    _playerSkin = _playerTextures[15];
+                //else
+                //{
+                //    if (mouseState.X < 266 && mouseState.Y > 160 && mouseState.Y < 320)
+                //        _playerSkin = _playerTextures[11];
+                //    if (mouseState.X > 533 && mouseState.Y > 160 && mouseState.Y < 320)
+                //        _playerSkin = _playerTextures[12];
+                //    if (mouseState.X < 533 && mouseState.X > 266 && mouseState.Y < 320)
+                //        _playerSkin = _playerTextures[9];
+                //    if (mouseState.X < 533 && mouseState.X > 266 && mouseState.Y > 160)
+                //        _playerSkin = _playerTextures[10];
+                //    if (mouseState.X < 533 && mouseState.X > 266 && mouseState.Y > 160 && mouseState.Y < 320)
+                //        _playerSkin = _playerTextures[9];
+                //}
 
 
 
             }
 
 
-
-
-
-
         }
+        public void Bullet(KeyboardState keyboardState, Projectile _projectile)
+        {
+            if (keyboardState.IsKeyDown(Keys.Space))
+            {
+                Vector2 bulletPosition = new Vector2(_location.Width / 2, _location.Height / 2); // Position the bullet
+                Vector2 bulletVelocity = new Vector2(0, -5); // Adjust bullet speed as needed
+
+                //_projectile = new Projectile(//add bullet texture bulletPosition, bulletVelocity);
+                //// Add the bullet to a list or some other collection for management
+                //// ProjectileList.Add(bullet);
+            }
+        }
+
         public void Update(KeyboardState keyboardState, MouseState mouseState)
         {
             Move(keyboardState);
             PickTexture(mouseState);
+            //Bullet(keyboardState);
 
 
 
@@ -164,20 +181,20 @@ namespace FinalProject
             spriteBatch.Draw(_playerSkin, _location, Color.White);
 
         }
-        public bool Collide(List<Rectangle> items)
-        {
-            for (int i = 0; i <= items.Count; i++)
-                if (_location.Intersects(items[i]))
-                    return true;
-            return false;
-        }
+        //public bool Collide(List<Rectangle> items)
+        //{
+        //    //for (int i = 0; i <= items.Count; i++)
+        //    //    if (_location.Intersects(items[i]))
+        //    //        return true;
+        //    //return false;
+        //}
         public void UndoMove()
         {
-            if(collide)
-            {
-                _location.X -= (int)_speed.X;
-                _location.Y -= (int)_speed.Y;
-            }
+            //if(collide)
+            //{
+            //    _location.X -= (int)_speed.X;
+            //    _location.Y -= (int)_speed.Y;
+            //}
             
         }
         
