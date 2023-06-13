@@ -20,6 +20,14 @@ namespace FinalProject
         Texture2D HazSETexture;
         Texture2D HazSWTexture;
         Texture2D HazNWTexture;
+        Texture2D HazSHUTexture;
+        Texture2D HazSHDTexture;
+        Texture2D HazSHLTexture;
+        Texture2D HazSHRTexture;
+        Texture2D HazSHNETexture;
+        Texture2D HazSHNWTexture;
+        Texture2D HazSHSETexture;
+        Texture2D HazSHSWTexture;
         Player player;
         MouseState mouseState;
         KeyboardState keyboardState;
@@ -51,18 +59,34 @@ namespace FinalProject
             HazSETexture = Content.Load<Texture2D>("HazmatSouthE");
             HazSWTexture = Content.Load<Texture2D>("HazmatSouthW");
             HazNWTexture = Content.Load<Texture2D>("HazmatNorthW");
+            HazSHUTexture = Content.Load<Texture2D>("HazmatShootU");
+            HazSHDTexture = Content.Load<Texture2D>("HazmatShootD");
+            HazSHLTexture = Content.Load<Texture2D>("HazmatShootL");
+            HazSHRTexture = Content.Load<Texture2D>("HazmatShootR");
+            HazSHNETexture = Content.Load<Texture2D>("HazmatShootNE");
+            HazSHNWTexture = Content.Load<Texture2D>("HazmatShootNW");
+            HazSHSETexture = Content.Load<Texture2D>("HazmatShootSE");
+            HazSHSWTexture = Content.Load<Texture2D>("HazmatShootSW");
 
 
             HazTexture = HazSTexture;
-            pTextures.Add(HazSTexture);
-            pTextures.Add(HazUTexture);
-            pTextures.Add(HazDTexture);
-            pTextures.Add(HazLTexture);
-            pTextures.Add(HazRTexture);
-            pTextures.Add(HazNETexture);
-            pTextures.Add(HazSETexture);
-            pTextures.Add(HazSWTexture);
-            pTextures.Add(HazNWTexture);
+            pTextures.Add(HazSTexture);//0
+            pTextures.Add(HazUTexture);//1
+            pTextures.Add(HazDTexture);//2
+            pTextures.Add(HazLTexture);//3
+            pTextures.Add(HazRTexture);//4
+            pTextures.Add(HazNETexture);//5
+            pTextures.Add(HazSETexture);//6
+            pTextures.Add(HazSWTexture);//7
+            pTextures.Add(HazNWTexture);//8
+            pTextures.Add(HazSHUTexture);//9
+            pTextures.Add(HazSHDTexture);//10
+            pTextures.Add(HazSHLTexture);//11
+            pTextures.Add(HazSHRTexture);//12
+            pTextures.Add(HazSHNETexture);//13
+            pTextures.Add(HazSHNWTexture);//14
+            pTextures.Add(HazSHSETexture);//15
+            pTextures.Add(HazSHSWTexture);//16
 
 
         }
@@ -81,7 +105,7 @@ namespace FinalProject
 
 
 
-                player.Update(keyboardState);
+                player.Update(keyboardState, mouseState);
 
 
             base.Update(gameTime);

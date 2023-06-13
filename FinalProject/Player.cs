@@ -15,6 +15,8 @@ namespace FinalProject
         private Texture2D _playerSkin;
         private Rectangle _location;
         private Vector2 _speed; // _speed.X is horizontal speed, _speed.Y is vertical speed
+        private int diffX = 0;
+        private int diffY = 0;
 
 
 
@@ -62,11 +64,16 @@ namespace FinalProject
             {
                 this._speed.Y += 2;
             }
-            _location.X += (int)_speed.X;
+           
+                _location.X += (int)_speed.X;
             _location.Y += (int)_speed.Y;
         }
-        public void PickTexture()
+        public void PickTexture(MouseState mouseState)
         {
+            
+
+
+
             if (this._speed.X == 0 && this._speed.Y == 0)
                 _playerSkin = _playerTextures[0];
             else
@@ -92,16 +99,58 @@ namespace FinalProject
                 }
                
             }
-            
+            if (mouseState.LeftButton == ButtonState.Pressed)
+            {
+                //Fix shoot relative to body
+
+                diffX = _location.X - mouseState.X;
+                diffY = _location.Y - mouseState.Y;
+                if (_location.X < 266)
+                {
+
+                }
+
+                if (diffX <= 134 && diffX >= -134 && diffY <= 53 && diffY>= -53)
+                {
+                    
+                }
+
+                if (mouseState.X < 266 && mouseState.Y < 160)
+                    _playerSkin = _playerTextures[14];
+                else if (mouseState.X < 266 && mouseState.Y > 320)
+                    _playerSkin = _playerTextures[16];
+                else if (mouseState.X > 533 && mouseState.Y < 160)
+                    _playerSkin = _playerTextures[13];
+                else if (mouseState.X > 533 && mouseState.Y > 320)
+                    _playerSkin = _playerTextures[15];
+                else
+                {
+                    if (mouseState.X < 266 && mouseState.Y > 160 && mouseState.Y < 320)
+                        _playerSkin = _playerTextures[11];
+                    if (mouseState.X > 533 && mouseState.Y > 160 && mouseState.Y < 320)
+                        _playerSkin = _playerTextures[12];
+                    if (mouseState.X < 533 && mouseState.X > 266 && mouseState.Y < 320)
+                        _playerSkin = _playerTextures[9];
+                    if (mouseState.X < 533 && mouseState.X > 266 && mouseState.Y > 160)
+                        _playerSkin = _playerTextures[10];
+                    if (mouseState.X < 533 && mouseState.X > 266 && mouseState.Y > 160 && mouseState.Y < 320)
+                        _playerSkin = _playerTextures[9];
+                }
+
+
+
+            }
+
+
 
 
 
 
         }
-        public void Update(KeyboardState keyboardState)
+        public void Update(KeyboardState keyboardState, MouseState mouseState)
         {
             Move(keyboardState);
-            PickTexture();
+            PickTexture(mouseState);
 
 
 
