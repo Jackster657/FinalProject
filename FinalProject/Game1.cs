@@ -32,6 +32,7 @@ namespace FinalProject
         Texture2D BackgroudTexture;
         Rectangle BackgroundRect;
         Player player;
+        Projectile bullet;
         MouseState mouseState;
         KeyboardState keyboardState;
         Texture2D bulletTexture;
@@ -51,6 +52,7 @@ namespace FinalProject
             CollisionTextures = new List<Rectangle>();
             base.Initialize();
             player = new Player(pTextures, 10, 10);
+            
         }
 
         protected override void LoadContent()
@@ -114,13 +116,16 @@ namespace FinalProject
 
             keyboardState = Keyboard.GetState();
             mouseState = Mouse.GetState();
-           
-            
-           
+
+            if (mouseState.LeftButton == ButtonState.Pressed)
+            {
+                bullet = new Projectile(bulletTexture,)
+            }
 
 
 
-            player.Update(keyboardState, mouseState);
+
+                player.Update(keyboardState, mouseState);
             //player.Collide(CollisionTextures);
 
 
