@@ -143,41 +143,7 @@ namespace FinalProject
                 {
                     _playerSkin = _playerTextures[11];
                 }
-                //if (angle <=20 && angle >= 340)
-                //{
-
-                //}
-
-
-
-                //diffX = _location.X - mouseState.X;
-                //diffY = _location.Y - mouseState.Y;
-
-                //if (diffX <= 134 && diffX >= -134 && diffY <= 53 && diffY >= -53)
-                //{
-                //    _playerSkin= _playerTextures[0];
-                //}
-                //else if (mouseState.X < 266 && mouseState.Y < 160)
-                //    _playerSkin = _playerTextures[14];
-                //else if (mouseState.X < 266 && mouseState.Y > 320)
-                //    _playerSkin = _playerTextures[16];
-                //else if (mouseState.X > 533 && mouseState.Y < 160)
-                //    _playerSkin = _playerTextures[13];
-                //else if (mouseState.X > 533 && mouseState.Y > 320)
-                //    _playerSkin = _playerTextures[15];
-                //else
-                //{
-                //    if (mouseState.X < 266 && mouseState.Y > 160 && mouseState.Y < 320)
-                //        _playerSkin = _playerTextures[11];
-                //    if (mouseState.X > 533 && mouseState.Y > 160 && mouseState.Y < 320)
-                //        _playerSkin = _playerTextures[12];
-                //    if (mouseState.X < 533 && mouseState.X > 266 && mouseState.Y < 320)
-                //        _playerSkin = _playerTextures[9];
-                //    if (mouseState.X < 533 && mouseState.X > 266 && mouseState.Y > 160)
-                //        _playerSkin = _playerTextures[10];
-                //    if (mouseState.X < 533 && mouseState.X > 266 && mouseState.Y > 160 && mouseState.Y < 320)
-                //        _playerSkin = _playerTextures[9];
-                //}
+                
             }
         }
 
@@ -191,9 +157,9 @@ namespace FinalProject
                 Vector2 bulletPosition = new Vector2(_location.Width / 2, _location.Height / 2); // Position the bullet
                 Vector2 bulletVelocity = new Vector2(0, -5); // Adjust bullet speed as needed
 
-                //_projectile = new Projectile(//add bullet texture bulletPosition, bulletVelocity);
-                //// Add the bullet to a list or some other collection for management
-                //// ProjectileList.Add(bullet);
+                _projectile = new Projectile( bulletPosition, bulletVelocity);
+                 //Add the bullet to a list or some other collection for management
+                 //ProjectileList.Add(bullet);
             }
         }
 
@@ -201,7 +167,7 @@ namespace FinalProject
         {
             Move(keyboardState);
             PickTexture(mouseState);
-            //Bullet(keyboardState);
+            Bullet(keyboardState);
 
 
 

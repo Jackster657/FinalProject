@@ -74,7 +74,7 @@ namespace FinalProject
             HazSHSETexture = Content.Load<Texture2D>("HazmatShootSE");
             HazSHSWTexture = Content.Load<Texture2D>("HazmatShootSW");
             BackgroudTexture = Content.Load<Texture2D>("400Danimated");
-            //bulletTexture = Content.Load<Texture2D>("bulletTexture");
+            bulletTexture = Content.Load<Texture2D>("Solid_red");
 
 
             HazTexture = HazSTexture; 
