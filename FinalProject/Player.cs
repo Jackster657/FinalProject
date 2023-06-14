@@ -109,32 +109,47 @@ namespace FinalProject
             {
                 float angle = (float)Math.Atan2(mouseState.Y - (_location.Y + _location.Height / 2), mouseState.X - (_location.X + _location.Width / 2));
                 angle = MathHelper.ToDegrees(angle);
-                if(angle >= 20 && angle <= 80)
-                    {
-                   _playerSkin = _playerTextures[15];
-                }
-                if (angle >= 70 && angle <= 110)
+                System.Diagnostics.Debug.WriteLine(angle.ToString());
+                if (angle >= -22.5 && angle <= 22.5)
                 {
+                   _playerSkin = _playerTextures[12];
+                }
+                else if (angle >= 22.5 && angle <= 67.5)
+                {
+                    _playerSkin = _playerTextures[15];
+                }
+                else if (angle >= 67.5 && angle <= 112.5)
+                {
+                    //works
                     _playerSkin = _playerTextures[10];
                 }
-                if (angle >= 110 && angle<= 170)
+                else if (angle >= 112.5 && angle <= 157.5)
+                {
+                    _playerSkin = _playerTextures[16];
+                }
+                else if (angle >= -157.5 && angle <= -112.5)
+                {
+                    _playerSkin = _playerTextures[14];
+                }
+                else if (angle >= -112.5 && angle <= -67.5)
+                {
+                    _playerSkin = _playerTextures[9];
+                }
+                else if (angle >= -67.5 && angle <= -22.5)
+                {
+                    _playerSkin = _playerTextures[13];
+                }
+                else
                 {
                     _playerSkin = _playerTextures[11];
-                }
-                if (angle >= 160 && angle <= 200)
-                {
-                    _playerSkin = _playerTextures[12];
                 }
                 //if (angle <=20 && angle >= 340)
                 //{
 
                 //}
 
-                    else
-                    {
-                        _playerSkin = _playerTextures[10];
-                    }
-                
+
+
                 //diffX = _location.X - mouseState.X;
                 //diffY = _location.Y - mouseState.Y;
 
