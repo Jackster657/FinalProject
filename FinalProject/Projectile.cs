@@ -32,14 +32,12 @@ namespace FinalProject
 
             public void Update(GameTime gameTime)
             {
-                // Move the bullet based on its velocity
                 
                 _position += _velocity;
             }
 
             public void Draw(SpriteBatch spriteBatch)
             {
-                // Draw the bullet
                 spriteBatch.Draw(_texture, _position, Color.White);
             }
         }

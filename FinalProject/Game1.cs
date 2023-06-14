@@ -77,7 +77,7 @@ namespace FinalProject
             //bulletTexture = Content.Load<Texture2D>("bulletTexture");
 
 
-            HazTexture = HazSTexture;
+            HazTexture = HazSTexture; 
             pTextures.Add(HazSTexture);//0
             pTextures.Add(HazUTexture);//1
             pTextures.Add(HazDTexture);//2
@@ -103,7 +103,7 @@ namespace FinalProject
 
             BackgroundRect = new Rectangle(0, 0, 800, 480);
 
-
+             
         }
 
         protected override void Update(GameTime gameTime)

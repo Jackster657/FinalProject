@@ -107,26 +107,42 @@ namespace FinalProject
             }
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
-                //Fix shoot relative to body
-
-
-                //diffX =
-                //diffY = 
-                //if (_location.X < 266)
+                float angle = (float)Math.Atan2(mouseState.Y - (_location.Y + _location.Height / 2), mouseState.X - (_location.X + _location.Width / 2));
+                angle = MathHelper.ToDegrees(angle);
+                if(angle >= 20 && angle <= 80)
+                    {
+                   _playerSkin = _playerTextures[15];
+                }
+                if (angle >= 70 && angle <= 110)
+                {
+                    _playerSkin = _playerTextures[10];
+                }
+                if (angle >= 110 && angle<= 170)
+                {
+                    _playerSkin = _playerTextures[11];
+                }
+                if (angle >= 160 && angle <= 200)
+                {
+                    _playerSkin = _playerTextures[12];
+                }
+                //if (angle <=20 && angle >= 340)
                 //{
 
                 //}
-                //if (_location.X > 533)
+
+                    else
+                    {
+                        _playerSkin = _playerTextures[10];
+                    }
+                
+                //diffX = _location.X - mouseState.X;
+                //diffY = _location.Y - mouseState.Y;
+
+                //if (diffX <= 134 && diffX >= -134 && diffY <= 53 && diffY >= -53)
                 //{
-
+                //    _playerSkin= _playerTextures[0];
                 //}
-
-                //if (diffX <= 134 && diffX >= -134 && diffY <= 53 && diffY>= -53)
-                //{
-                    
-                //}
-
-                //if (mouseState.X < 266 && mouseState.Y < 160)
+                //else if (mouseState.X < 266 && mouseState.Y < 160)
                 //    _playerSkin = _playerTextures[14];
                 //else if (mouseState.X < 266 && mouseState.Y > 320)
                 //    _playerSkin = _playerTextures[16];
@@ -147,13 +163,12 @@ namespace FinalProject
                 //    if (mouseState.X < 533 && mouseState.X > 266 && mouseState.Y > 160 && mouseState.Y < 320)
                 //        _playerSkin = _playerTextures[9];
                 //}
-
-
-
             }
-
-
         }
+
+
+
+    
         public void Bullet(KeyboardState keyboardState, Projectile _projectile)
         {
             if (keyboardState.IsKeyDown(Keys.Space))

@@ -10,42 +10,54 @@ namespace FinalProject
 {
     internal class Enemies
     {
-        private Texture2D _texture;
-        private Rectangle _location;
-        private Vector2 _speed; // _speed.X is horizontal speed, _speed.Y is vertical speed
+        
 
-        public Enemies(Texture2D texture, int x, int y)
+
+    
+        private Texture2D _enemyTexture;
+        private Rectangle _location;
+        private Vector2 _velocity;
+        private float _speed = 2f;
+
+        public Enemies(Texture2D texture, Vector2 position)
         {
-            _texture = texture;
-            _location = new Rectangle(x, y, 30, 30);
-            _speed = new Vector2();
+            _enemyTexture = texture;
+            _location = new Rectangle((int)position.X, (int)position.Y, texture.Width, texture.Height);
         }
-        public float HSpeed
+
+        public void Update(Vector2 playerPosition, List<Rectangle> obstacles)
         {
-            get { return _speed.X; }
-            set { _speed.X = value; }
-        }
-        private void Move()
-        {
-            _location.X += (int)_speed.X;
-            _location.Y += (int)_speed.Y;
-        }
-        public void Update()
-        {
-            Move();
-        }
+            Vector2 direction = Vector2.Normalize(playerPosition - _location.Center.ToVector2());
+
+            // Update the enemy's velocity based on the direction and speed
+            _velocity = direction * _speed;
+
+            _location.X += (int)_velocity.X;
+            _location.Y += (int)_velocity.Y;
+
+            foreach (Rectangle obstacle in obstacles)
+            {
+                if (_location.Intersects(obstacle))
+                {
+                    Vector2 obstacleCenter = obstacle.Center.ToVector2();
+                    Vector2 avoidanceDirection = Vector2.Normalize(_location.Center.ToVector2() - obstacleCenter);
+
+                    // Adjust the enemy's velocity to avoid the obstacle
+                    _velocity += avoidanceDirection * _speed;
+
+                    // Move the enemy based on the updated velocity
+                    _location.X += (int)_velocity.X;
+                    _location.Y += (int)_velocity.Y;
+                } 
+            }
+        } 
+
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_texture, _location, Color.White);
-        }
-        public bool Collide(Rectangle item)
-        {
-            return _location.Intersects(item);
-        }
-        public void UndoMove()
-        {
-            _location.X -= (int)_speed.X;
-            _location.Y -= (int)_speed.Y;
+            spriteBatch.Draw(_enemyTexture, _location, Color.White); 
         }
     }
+
+
+
 }
