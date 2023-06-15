@@ -27,6 +27,7 @@ namespace FinalProject
             _playerTextures = textures;
             _location = new Rectangle(x, y, 40, 60);
             _speed = new Vector2();
+            _bulletTexture = _playerTextures[_playerTextures.Count - 1];
         }
 
         public Player(List<Texture2D> textures, Rectangle rectangle)
@@ -72,7 +73,7 @@ namespace FinalProject
             _location.Y += (int)_speed.Y;
             
         }
-        public void PickTexture(MouseState mouseState)
+        public void PickTexture(MouseState mouseState, MouseState prevMouseState)
         {
 
             if (this._speed.X == 0 && this._speed.Y == 0)
@@ -100,7 +101,7 @@ namespace FinalProject
                 }
                
             }
-            if (mouseState.LeftButton == ButtonState.Pressed)
+            if (mouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released)
             {
                 float angle = (float)Math.Atan2(mouseState.Y - (_location.Y + _location.Height / 2), mouseState.X - (_location.X + _location.Width / 2));
                 angle = MathHelper.ToDegrees(angle);
@@ -115,7 +116,7 @@ namespace FinalProject
                 }
                 else if (angle >= 67.5 && angle <= 112.5)
                 {
-4                    _playerSkin = _playerTextures[10];
+                    _playerSkin = _playerTextures[10];
                 }
                 else if (angle >= 112.5 && angle <= 157.5)
                 {
@@ -144,27 +145,33 @@ namespace FinalProject
 
 
     
-        public void Bullet(MouseState mouseState, Projectile _projectile)
+        public void Bullet(MouseState mouseState, List<Projectile> bullets)
         {
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
-                Vector2 bulletPosition = new Vector2(_location.Width / 2, _location.Height / 2); // Position the bullet
+                //Vector2 bulletPosition = new Vector2(_location.Width / 2, _location.Height / 2); // Position the bullet
                 Vector2 playerCenter = new Vector2(_location.X + _location.Width / 2, _location.Y + _location.Height / 2);
                 Vector2 mousePosition = new Vector2(mouseState.X, mouseState.Y);
-                Vector2 bulletDirection = Vector2.Normalize(mousePosition - playerCenter);
-                Vector2 bulletVelocity = new Vector2(bulletDirection); // Adjust bullet speed as needed
+                Vector2 bulletDirection = Vector2.Normalize(mousePosition + playerCenter);
+                //Vector2 bulletVelocity = new Vector2(bulletDirection); // Adjust bullet speed as needed
 
-                _projectile = new Projectile(_bulletTexture, bulletPosition, bulletVelocity);
+                bullets.Add(new Projectile(_bulletTexture, playerCenter, bulletDirection));
                  //Add the bullet to a list or some other collection for management
                  //ProjectileList.Add(bullet);
             }
         }
 
-        public void Update(KeyboardState keyboardState, MouseState mouseState, Projectile _projectile)
+        public void Update(KeyboardState keyboardState, MouseState mouseState, List<Projectile> bullets, MouseState prevMouseState)
         {
             Move(keyboardState);
-            PickTexture(mouseState);
-            Bullet(mouseState, _projectile);
+            PickTexture(mouseState, prevMouseState);
+            foreach (Projectile bullet in bullets)
+            {
+                bullet.Update();
+
+            }
+
+            Bullet(mouseState, bullets);
 
 
 

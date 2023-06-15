@@ -11,6 +11,7 @@ namespace FinalProject
         private SpriteBatch _spriteBatch;
         List<Texture2D> pTextures;
         List<Rectangle> CollisionTextures;
+        Texture2D borderTexture;
         Texture2D HazUTexture;
         Texture2D HazDTexture;
         Texture2D HazLTexture;
@@ -35,6 +36,7 @@ namespace FinalProject
         Projectile bullet;
         MouseState mouseState;
         KeyboardState keyboardState;
+        MouseState prevMouseState;
         Texture2D bulletTexture;
         List<Projectile> projectileList;
 
@@ -50,6 +52,7 @@ namespace FinalProject
             
             pTextures = new List<Texture2D>();
             CollisionTextures = new List<Rectangle>();
+            projectileList = new List<Projectile>();
             base.Initialize();
             player = new Player(pTextures, 10, 10);
             
@@ -76,7 +79,8 @@ namespace FinalProject
             HazSHSETexture = Content.Load<Texture2D>("HazmatShootSE");
             HazSHSWTexture = Content.Load<Texture2D>("HazmatShootSW");
             BackgroudTexture = Content.Load<Texture2D>("400Danimated");
-            bulletTexture = Content.Load<Texture2D>("Solid_red");
+            borderTexture = Content.Load<Texture2D>("Solid_red");
+            bulletTexture = Content.Load<Texture2D>("Bullet2");
 
 
             HazTexture = HazSTexture; 
@@ -97,11 +101,20 @@ namespace FinalProject
             pTextures.Add(HazSHNWTexture);//14
             pTextures.Add(HazSHSETexture);//15
             pTextures.Add(HazSHSWTexture);//16
+            pTextures.Add(bulletTexture); //17
 
 
-            CollisionTextures.Add(new Rectangle(0, 0, 450, 60));
-            CollisionTextures.Add(new Rectangle(0,0,160,40));
-            
+            CollisionTextures.Add(new Rectangle(0, 0, 450, 15));
+            CollisionTextures.Add(new Rectangle(320, 465, 500, 15));
+            CollisionTextures.Add(new Rectangle(425, 0, 400, 200));
+            CollisionTextures.Add(new Rectangle(0, 350, 320, 200));
+            CollisionTextures.Add(new Rectangle(95,230,95,5));
+            CollisionTextures.Add(new Rectangle(95, 120, 95, 5));
+            CollisionTextures.Add(new Rectangle(0, 175, 40, 20));
+            CollisionTextures.Add(new Rectangle(0, 290, 40, 20));
+            CollisionTextures.Add(new Rectangle(310, 175, 10, 20));
+
+
 
             BackgroundRect = new Rectangle(0, 0, 800, 480);
 
@@ -116,16 +129,13 @@ namespace FinalProject
 
             keyboardState = Keyboard.GetState();
             mouseState = Mouse.GetState();
+            prevMouseState = Mouse.GetState();
 
-            if (mouseState.LeftButton == ButtonState.Pressed)
-            {
-                bullet = new Projectile(bulletTexture,)
-            }
+            
 
 
 
-
-                player.Update(keyboardState, mouseState);
+            player.Update(keyboardState, mouseState, projectileList, prevMouseState);
             //player.Collide(CollisionTextures);
 
 
@@ -139,10 +149,14 @@ namespace FinalProject
             _spriteBatch.Begin();
             _spriteBatch.Draw(BackgroudTexture, BackgroundRect, Color.White);
             player.Draw(_spriteBatch);
-            //foreach (Projectile bullet in projectileList)
-            //{
-            //    bullet.Draw(_spriteBatch);
-            //}
+            foreach (Projectile bullet in projectileList)
+            {
+                bullet.Draw(_spriteBatch);
+            }
+            foreach (Rectangle borders in CollisionTextures)
+            {
+                _spriteBatch.Draw(borderTexture, borders, Color.White);
+            }
             _spriteBatch.End();
 
             base.Draw(gameTime);

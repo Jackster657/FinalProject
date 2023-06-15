@@ -9,28 +9,22 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace FinalProject
-{
-    
-        
-
-
-    
-        
-        internal class Projectile
+{       
+        public class Projectile
         {
             private Texture2D _texture;
             private Vector2 _position;
             private Vector2 _velocity;
 
             
-            Projectile(Texture2D texture, Vector2 position, Vector2 velocity)
+            public Projectile(Texture2D texture, Vector2 position, Vector2 velocity)
             {
                 _texture = texture;
                 _position = position;
                 _velocity = velocity;
             }
 
-            public void Update(GameTime gameTime)
+            public void Update()
             {
                 
                 _position += _velocity;
@@ -38,7 +32,7 @@ namespace FinalProject
 
             public void Draw(SpriteBatch spriteBatch)
             {
-                spriteBatch.Draw(_texture, _position, Color.White);
+                spriteBatch.Draw(_texture, new Rectangle((int)Math.Round(_position.X), (int)Math.Round(_position.Y), 15, 15), Color.White);
             }
         }
 
