@@ -53,6 +53,7 @@ namespace FinalProject
             pTextures = new List<Texture2D>();
             CollisionTextures = new List<Rectangle>();
             projectileList = new List<Projectile>();
+            prevMouseState = Mouse.GetState();
             base.Initialize();
             player = new Player(pTextures, 10, 10);
             
@@ -129,9 +130,10 @@ namespace FinalProject
 
             keyboardState = Keyboard.GetState();
             mouseState = Mouse.GetState();
-            prevMouseState = Mouse.GetState();
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            
+
+
 
 
 

@@ -19,6 +19,8 @@ namespace FinalProject
         private int diffY = 0;
         private Projectile _projectile;
         private Texture2D _bulletTexture;
+        //private const float TextureChangeTime = 1f;
+        //private float textureTimer = 0f;
 
 
 
@@ -99,16 +101,19 @@ namespace FinalProject
                     else if (this._speed.Y < 0)
                         _playerSkin = _playerTextures[1];
                 }
-               
+
             }
             if (mouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released)
             {
+                //textureTimer = TextureChangeTime;
+                
+
                 float angle = (float)Math.Atan2(mouseState.Y - (_location.Y + _location.Height / 2), mouseState.X - (_location.X + _location.Width / 2));
                 angle = MathHelper.ToDegrees(angle);
                 System.Diagnostics.Debug.WriteLine(angle.ToString());
                 if (angle >= -22.5 && angle <= 22.5)
                 {
-                   _playerSkin = _playerTextures[12];
+                    _playerSkin = _playerTextures[12];
                 }
                 else if (angle >= 22.5 && angle <= 67.5)
                 {
@@ -138,26 +143,47 @@ namespace FinalProject
                 {
                     _playerSkin = _playerTextures[11];
                 }
-                
+                //if (textureTimer > 0)
+                //{
+                //    textureTimer -= deltaTime;
+                //}
+
+
+                //if (textureTimer <= 0)
+                //{
+                //    _playerSkin = _playerTextures[0];
+                //    textureTimer = 0;
+                //}
+
+
             }
         }
-
-
-
     
-        public void Bullet(MouseState mouseState, List<Projectile> bullets)
+        public void Bullet(MouseState mouseState, List<Projectile> bullets, MouseState prevMouseState)
         {
-            if (mouseState.LeftButton == ButtonState.Pressed)
+            //if (mouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released)
+            //{
+            //    //Vector2 bulletPosition = new Vector2(_location.Width / 2, _location.Height / 2); // Position the bullet
+            //    Vector2 playerCenter = new Vector2(_location.X + _location.Width / 2, _location.Y + _location.Height / 2);
+            //    Vector2 mousePosition = new Vector2(mouseState.X, mouseState.Y);
+            //    Vector2 bulletDirection = Vector2.Normalize(mousePosition + playerCenter);
+            //    //Vector2 bulletVelocity = new Vector2(bulletDirection); // Adjust bullet speed as needed
+
+            //    bullets.Add(new Projectile(_bulletTexture, playerCenter, bulletDirection));
+            //     //Add the bullet to a list or some other collection for management
+            //     //ProjectileList.Add(bullet);
+            //}
+            if (mouseState.LeftButton == ButtonState.Pressed )
             {
-                //Vector2 bulletPosition = new Vector2(_location.Width / 2, _location.Height / 2); // Position the bullet
-                Vector2 playerCenter = new Vector2(_location.X + _location.Width / 2, _location.Y + _location.Height / 2);
+                Vector2 playerCenter = new Vector2(_location.X + _location.Width / 2, (_location.Y + _location.Height / 2) - 20);
                 Vector2 mousePosition = new Vector2(mouseState.X, mouseState.Y);
-                Vector2 bulletDirection = Vector2.Normalize(mousePosition + playerCenter);
-                //Vector2 bulletVelocity = new Vector2(bulletDirection); // Adjust bullet speed as needed
+                Vector2 bulletDirection = mousePosition - playerCenter;
+                bulletDirection.Normalize();
+                bulletDirection.X *= 4.5f;
+                bulletDirection.Y *= 4.5f;
+
 
                 bullets.Add(new Projectile(_bulletTexture, playerCenter, bulletDirection));
-                 //Add the bullet to a list or some other collection for management
-                 //ProjectileList.Add(bullet);
             }
         }
 
@@ -171,7 +197,7 @@ namespace FinalProject
 
             }
 
-            Bullet(mouseState, bullets);
+            Bullet(mouseState, bullets, prevMouseState);
 
 
 
@@ -181,22 +207,26 @@ namespace FinalProject
             spriteBatch.Draw(_playerSkin, _location, Color.White);
 
         }
-        //public bool Collide(List<Rectangle> items)
-        //{
-        //    //for (int i = 0; i <= items.Count; i++)
-        //    //    if (_location.Intersects(items[i]))
-        //    //        return true;
-        //    //return false;
-        //}
-        public void UndoMove()
+        public bool Collide(List<Rectangle> items)
         {
-            //if(collide)
-            //{
-            //    _location.X -= (int)_speed.X;
-            //    _location.Y -= (int)_speed.Y;
-            //}
-            
+            for (int i = 0; i <= items.Count; i++)
+                if (_location.Intersects(items[i]))
+                {
+                    return true;
+                    UndoMove(Collide);
+                }
+                    
+            return false;
         }
-        
+        public void UndoMove(bool Collide)
+        {
+            if (Collide)
+            {
+                _location.X -= (int)_speed.X;
+                _location.Y -= (int)_speed.Y;
+            }
+
+        }
+
     }
 }
