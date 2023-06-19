@@ -39,6 +39,10 @@ namespace FinalProject
         MouseState prevMouseState;
         Texture2D bulletTexture;
         List<Projectile> projectileList;
+        List<Enemies> enemiesList;
+        float seconds;
+        float startTime;
+        float secondsUp;
 
         public Game1()
         {
@@ -53,9 +57,10 @@ namespace FinalProject
             pTextures = new List<Texture2D>();
             CollisionTextures = new List<Rectangle>();
             projectileList = new List<Projectile>();
-            prevMouseState = Mouse.GetState();
+            enemiesList= new List<Enemies>();
+            
             base.Initialize();
-            player = new Player(pTextures, 10, 10);
+            player = new Player(pTextures, 50, 50);
             
         }
 
@@ -113,7 +118,8 @@ namespace FinalProject
             CollisionTextures.Add(new Rectangle(95, 120, 95, 5));
             CollisionTextures.Add(new Rectangle(0, 175, 40, 20));
             CollisionTextures.Add(new Rectangle(0, 290, 40, 20));
-            CollisionTextures.Add(new Rectangle(310, 175, 10, 20));
+            CollisionTextures.Add(new Rectangle(330, 155, 10, 5));
+            CollisionTextures.Add(new Rectangle(270, 220, 10, 5));
 
 
 
@@ -129,15 +135,20 @@ namespace FinalProject
             
 
             keyboardState = Keyboard.GetState();
+            prevMouseState = mouseState;
             mouseState = Mouse.GetState();
-            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            seconds = (float)gameTime.TotalGameTime.TotalSeconds - startTime;
+           
+            if (seconds > 2) // Takes a timestamp every 10 seconds.
+                startTime = (float)gameTime.TotalGameTime.TotalSeconds;
+
+
+            System.Diagnostics.Debug.WriteLine(seconds.ToString());
 
 
 
-
-
-
-            player.Update(keyboardState, mouseState, projectileList, prevMouseState);
+            player.Update(keyboardState, prevMouseState, mouseState, projectileList, CollisionTextures);
             //player.Collide(CollisionTextures);
 
 
@@ -151,6 +162,11 @@ namespace FinalProject
             _spriteBatch.Begin();
             _spriteBatch.Draw(BackgroudTexture, BackgroundRect, Color.White);
             player.Draw(_spriteBatch);
+            foreach (Enemies enemies in enemiesList)
+            {
+                enemies.Draw(_spriteBatch);
+
+            }
             foreach (Projectile bullet in projectileList)
             {
                 bullet.Draw(_spriteBatch);
