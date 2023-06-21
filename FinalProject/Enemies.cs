@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FinalProject
 {
-    internal class Enemies
+    public class Enemies
     {
         
 
@@ -22,14 +22,19 @@ namespace FinalProject
         public Enemies(Texture2D texture, Vector2 position)
         {
             _enemyTexture = texture;
-            _location = new Rectangle((int)position.X, (int)position.Y, texture.Width, texture.Height);
+            _location = new Rectangle((int)position.X, (int)position.Y, 60, 60);
+        }
+
+        public Rectangle Rect
+        {
+            get { return _location; }
+            set { _location = value; }
         }
 
         public void Update(Vector2 playerPosition, List<Rectangle> obstacles)
         {
             Vector2 direction = Vector2.Normalize(playerPosition - _location.Center.ToVector2());
 
-            // Update the enemy's velocity based on the direction and speed
             _velocity = direction * _speed;
 
             _location.X += (int)_velocity.X;
@@ -41,16 +46,17 @@ namespace FinalProject
                 {
                     Vector2 obstacleCenter = obstacle.Center.ToVector2();
                     Vector2 avoidanceDirection = Vector2.Normalize(_location.Center.ToVector2() - obstacleCenter);
-
-                    // Adjust the enemy's velocity to avoid the obstacle
+                    _velocity.X *= 0.5f;
+                    _velocity.Y *= 0.5f;
                     _velocity += avoidanceDirection * _speed;
 
-                    // Move the enemy based on the updated velocity
                     _location.X += (int)_velocity.X;
                     _location.Y += (int)_velocity.Y;
                 } 
             }
+            
         } 
+        
 
         public void Draw(SpriteBatch spriteBatch)
         {

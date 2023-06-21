@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
 
 namespace FinalProject
@@ -31,15 +33,21 @@ namespace FinalProject
         Texture2D HazSHSETexture;
         Texture2D HazSHSWTexture;
         Texture2D BackgroudTexture;
+        Texture2D enemieTexture;
         Rectangle BackgroundRect;
         Player player;
         Projectile bullet;
+        Enemies enemies;
         MouseState mouseState;
         KeyboardState keyboardState;
         MouseState prevMouseState;
         Texture2D bulletTexture;
         List<Projectile> projectileList;
         List<Enemies> enemiesList;
+        SoundEffect shoot;
+        SoundEffect ricochet;
+        Song intro;
+        Song song;
         float seconds;
         float startTime;
         float secondsUp;
@@ -87,6 +95,9 @@ namespace FinalProject
             BackgroudTexture = Content.Load<Texture2D>("400Danimated");
             borderTexture = Content.Load<Texture2D>("Solid_red");
             bulletTexture = Content.Load<Texture2D>("Bullet2");
+            shoot = Content.Load<SoundEffect>("Realistic Gunshot Sound Effect");
+            ricochet = Content.Load<SoundEffect>("Bullet ricochet sound effect 2");
+            enemieTexture = Content.Load<Texture2D>("blueCreature");
 
 
             HazTexture = HazSTexture; 
@@ -114,18 +125,26 @@ namespace FinalProject
             CollisionTextures.Add(new Rectangle(320, 465, 500, 15));
             CollisionTextures.Add(new Rectangle(425, 0, 400, 200));
             CollisionTextures.Add(new Rectangle(0, 350, 320, 200));
-            CollisionTextures.Add(new Rectangle(95,230,95,5));
-            CollisionTextures.Add(new Rectangle(95, 120, 95, 5));
-            CollisionTextures.Add(new Rectangle(0, 175, 40, 20));
-            CollisionTextures.Add(new Rectangle(0, 290, 40, 20));
-            CollisionTextures.Add(new Rectangle(330, 155, 10, 5));
-            CollisionTextures.Add(new Rectangle(270, 220, 10, 5));
+            //objects
+           
+            CollisionTextures.Add(new Rectangle(0, 175, 30, 1));
+            CollisionTextures.Add(new Rectangle(0, 290, 30, 1));
+            CollisionTextures.Add(new Rectangle(330, 155, 1, 1));
+            CollisionTextures.Add(new Rectangle(270, 220, 1, 1));
+            CollisionTextures.Add(new Rectangle(480, 275, 100, 1));
+            CollisionTextures.Add(new Rectangle(480, 370, 100, 1));
+            CollisionTextures.Add(new Rectangle(360, 405, 70, 1));
+            CollisionTextures.Add(new Rectangle(680, 275, 100, 1));
+            CollisionTextures.Add(new Rectangle(680, 370, 100, 1));
+            CollisionTextures.Add(new Rectangle(105, 235, 75, 1));
+            CollisionTextures.Add(new Rectangle(105, 120, 75, 1));
 
 
 
             BackgroundRect = new Rectangle(0, 0, 800, 480);
+            enemiesList.Add(new Enemies(enemieTexture, new Vector2(340, 340)));
 
-             
+
         }
 
         protected override void Update(GameTime gameTime)
@@ -146,11 +165,19 @@ namespace FinalProject
 
             System.Diagnostics.Debug.WriteLine(seconds.ToString());
 
+            foreach (Enemies enemy in enemiesList)
+            {
+                enemy.Update(new Vector2(player.Bounds.X, player.Bounds.Y), CollisionTextures);
 
+            }
 
-            player.Update(keyboardState, prevMouseState, mouseState, projectileList, CollisionTextures);
-            //player.Collide(CollisionTextures);
+            player.Update(keyboardState, prevMouseState, mouseState, projectileList, CollisionTextures,shoot,ricochet);
 
+            foreach (Projectile projectile in projectileList)
+            {
+                projectile.Kill(enemiesList);
+            }
+            
 
             base.Update(gameTime);
         }
@@ -171,10 +198,10 @@ namespace FinalProject
             {
                 bullet.Draw(_spriteBatch);
             }
-            foreach (Rectangle borders in CollisionTextures)
-            {
-                _spriteBatch.Draw(borderTexture, borders, Color.White);
-            }
+            //foreach (Rectangle borders in CollisionTextures)
+            //{
+            //    _spriteBatch.Draw(borderTexture, borders, Color.White);
+            //}
             _spriteBatch.End();
 
             base.Draw(gameTime);

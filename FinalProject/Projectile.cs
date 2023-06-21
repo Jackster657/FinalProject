@@ -10,31 +10,64 @@ using System.Threading.Tasks;
 
 namespace FinalProject
 {       
-        public class Projectile
-        {
-            private Texture2D _texture;
-            private Vector2 _position;
-            private Vector2 _velocity;
+    public class Projectile
+    {
+        private Texture2D _texture;
+        private Vector2 _position;
+        private Vector2 _velocity;
+        private Rectangle _bulletRect;
 
             
-            public Projectile(Texture2D texture, Vector2 position, Vector2 velocity)
-            {
-                _texture = texture;
-                _position = position;
-                _velocity = velocity;
-            }
+        public Projectile(Texture2D texture, Vector2 position, Vector2 velocity)
+        {
+            _texture = texture;
+            _position = position;
+            _velocity = velocity;
+        }
+        public Rectangle Rect1
+        {
+            get { return _bulletRect; }
+            set { _bulletRect = value; }
+        }
+        public void Update()
+        {
+            _position += _velocity;
 
-            public void Update()
+            
+            
+        }
+        public bool Collision(List<Rectangle> items)
+        {
+            _bulletRect = (new Rectangle((int)Math.Round(_position.X), (int)Math.Round(_position.Y), 15, 15));
+            for (int i = 0; i < 13; i++)
             {
-                
-                _position += _velocity;
-            }
+                if (_bulletRect.Intersects(items[i]))
+                {
+                    return true;
+                }
 
-            public void Draw(SpriteBatch spriteBatch)
+            }
+            return false;
+            
+        }
+
+        public void Kill(List<Enemies> enemies)
+        {
+            for (int i = 0; i < enemies.Count; i++)
             {
-                spriteBatch.Draw(_texture, new Rectangle((int)Math.Round(_position.X), (int)Math.Round(_position.Y), 15, 15), Color.White);
+                if (_bulletRect.Intersects(enemies[i].Rect))
+                {
+                    enemies.RemoveAt(i);
+                    i--;
+                }
             }
         }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+                spriteBatch.Draw(_texture, new Rectangle((int)Math.Round(_position.X), (int)Math.Round(_position.Y), 15, 15), Color.White);
+        }
+    }
 
        
     

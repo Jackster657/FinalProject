@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +21,7 @@ namespace FinalProject
         private int diffY = 0;
         private Projectile _projectile;
         private Texture2D _bulletTexture;
+        private List<Rectangle> _bulletRects;
         float seconds;
         float startTime;
 
@@ -71,18 +74,21 @@ namespace FinalProject
             {
                 this._speed.Y += 2;
             }
+            _location.X += (int)_speed.X;
+            _location.Y += (int)_speed.Y;
+
             for (int i = 0; i < items.Count; i++)
             {
                 if (_location.Intersects(items[i]))
                 {
                     UndoMove();
+
                 }
-                else
+                else if (_location.Top < 0 || _location.Bottom > 480 || _location.Left < 0 || _location.Right > 800)
                 {
-                    _location.X += (int)_speed.X;
-                    _location.Y += (int)_speed.Y;
-                    break;
+                    UndoMove();
                 }
+               
             }
                 
 
@@ -182,7 +188,7 @@ namespace FinalProject
             }
         }
     
-        public void Bullet(MouseState mouseState, List<Projectile> bullets, MouseState prevMouseState)
+        public void Bullet(MouseState mouseState, MouseState prevMouseState, List<Projectile> bullets,  SoundEffect shoot)
         {
             
             if (mouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released)
@@ -194,42 +200,52 @@ namespace FinalProject
                 bulletDirection.X *= 4.5f;
                 bulletDirection.Y *= 4.5f;
 
-
-                bullets.Add(new Projectile(_bulletTexture, playerCenter, bulletDirection));
+                if (bullets.Count < 7)
+                {
+                    bullets.Add(new Projectile(_bulletTexture, playerCenter, bulletDirection));
+                    shoot.Play();
+                }
+                else
+                {
+                    //add empty sound
+                }
+                
+                
+                
+                
             }
+
         }
 
-        public void Update(KeyboardState keyboardState, MouseState prevMouseState, MouseState mouseState, List<Projectile> bullets, List<Rectangle> items)
+        public void Update(KeyboardState keyboardState, MouseState prevMouseState, MouseState mouseState, List<Projectile> bullets, List<Rectangle> items, SoundEffect shoot, SoundEffect ricochet)
         {
-            Move(keyboardState,items);
-            PickTexture(mouseState, prevMouseState);
-            foreach (Projectile bullet in bullets)
-            {
-                bullet.Update();
 
+            Move(keyboardState, items);
+            PickTexture(mouseState, prevMouseState);
+            for (int i = 0; i < bullets.Count; i++)
+            {
+                bullets[i].Update();
+                if (bullets[i].Collision(items))
+                {
+                    bullets.RemoveAt(i);
+                    ricochet.Play();
+                    i--;
+                }
             }
 
-            Bullet(mouseState, bullets, prevMouseState);
+
+            Bullet(mouseState, prevMouseState, bullets, shoot);
 
 
 
         }
+        
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(_playerSkin, _location, Color.White);
 
         }
-        //public bool Collide(List<Rectangle> items)
-        //{
-        //    for (int i = 0; i < items.Count; i++)
-        //        if (_location.Intersects(items[i]))
-        //        {
-        //            UndoMove();
-        //            return true;
-        //        }
-
-        //    return false;
-        //}
+        
         public void UndoMove()
         {
             

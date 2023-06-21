@@ -13,6 +13,18 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin ../../../../../Downloads/Bullet2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../../../../Downloads/Bullet2.png;Bullet2.png
+
 #begin ../../../../../Downloads/HazmatSouthW.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -37,7 +49,7 @@
 /processorParam:TextureFormat=Color
 /build:../../../../../Downloads/HazmatUp.png;HazmatUp.png
 
-#begin 400Danimated.gif
+#begin 400Danimated.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -47,9 +59,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:400Danimated.gif
+/build:400Danimated.png
 
-#begin Bullet2.png
+#begin blueCreature.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -59,7 +71,13 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Bullet2.png
+/build:blueCreature.png
+
+#begin Bullet ricochet sound effect 2.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Bullet ricochet sound effect 2.mp3
 
 #begin HazmatDown.png
 /importer:TextureImporter
@@ -252,6 +270,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:HazmatStand.png
+
+#begin Realistic Gunshot Sound Effect.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Realistic Gunshot Sound Effect.mp3
 
 #begin Solid_red.png
 /importer:TextureImporter
