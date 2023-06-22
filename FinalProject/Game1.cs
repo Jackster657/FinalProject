@@ -213,7 +213,7 @@ namespace FinalProject
             CollisionTextures.Add(new Rectangle(400, 250, 800, 250));
             CollisionTextures.Add(new Rectangle(870, 460, 400, 250));
             CollisionTextures.Add(new Rectangle(250, 650, 400, 200));
-
+            //3 level
             CollisionTextures.Add(new Rectangle(250, 650, 400, 200));
 
 
