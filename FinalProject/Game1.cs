@@ -3,16 +3,28 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace FinalProject
 {
     public class Game1 : Game
     {
+        enum Screen
+        {
+            Intro,
+            platform1,
+            platform2,
+            platform3
+        }
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         List<Texture2D> pTextures;
         List<Rectangle> CollisionTextures;
+        List<Rectangle> CollisionTextures2;
+        List<Rectangle> CollisionTextures3;
+        List<Texture2D> enemyTextures;
         Texture2D borderTexture;
         Texture2D HazUTexture;
         Texture2D HazDTexture;
@@ -32,8 +44,17 @@ namespace FinalProject
         Texture2D HazSHNWTexture;
         Texture2D HazSHSETexture;
         Texture2D HazSHSWTexture;
+        Texture2D HazDeadTexture;
         Texture2D BackgroudTexture;
-        Texture2D enemieTexture;
+        Texture2D BackgroundTexture2;
+        Texture2D BackgroundTexture3;
+        Texture2D enemyTexture;
+        Texture2D enemyLTexture;
+        Texture2D enemyRunRTexture;
+        Texture2D enemyRunLTexture;
+        Texture2D enemyRTexture;
+        Texture2D buttonUpTexture;
+        Rectangle buttonRect;
         Rectangle BackgroundRect;
         Player player;
         Projectile bullet;
@@ -42,15 +63,30 @@ namespace FinalProject
         KeyboardState keyboardState;
         MouseState prevMouseState;
         Texture2D bulletTexture;
+        Texture2D buttonClick;
+        Texture2D buttonTexture;
         List<Projectile> projectileList;
         List<Enemies> enemiesList;
         SoundEffect shoot;
         SoundEffect ricochet;
+        SoundEffect empty;
+        SoundEffect button;
+        Rectangle doorRect;
         Song intro;
         Song song;
-        float seconds;
+        float spawnInterval;
         float startTime;
-        float secondsUp;
+        float seconds;
+        float spawnTimer;
+        Screen screen;
+        int screenOn;
+        Random generator;
+        int enemyKills  = 0;
+        int damage = 0;
+        bool delay;
+        bool looped = false;
+        float delayDuration = 1.0f; 
+        float delayTimer = 0.0f;
 
         public Game1()
         {
@@ -66,10 +102,20 @@ namespace FinalProject
             CollisionTextures = new List<Rectangle>();
             projectileList = new List<Projectile>();
             enemiesList= new List<Enemies>();
-            
+            enemyTextures= new List<Texture2D>();
+            screen = Screen.Intro;
+            screenOn = 1;
+            _graphics.PreferredBackBufferWidth = 1200;
+            _graphics.PreferredBackBufferHeight = 720;
+            _graphics.ApplyChanges();
             base.Initialize();
             player = new Player(pTextures, 50, 50);
-            
+            generator = new Random();
+            buttonRect = new Rectangle(547, 250, 105, 80);
+            doorRect = new Rectangle(950,300,150,100);
+            buttonTexture = buttonUpTexture;
+            MediaPlayer.Play(intro);
+
         }
 
         protected override void LoadContent()
@@ -92,15 +138,26 @@ namespace FinalProject
             HazSHNWTexture = Content.Load<Texture2D>("HazmatShootNW");
             HazSHSETexture = Content.Load<Texture2D>("HazmatShootSE");
             HazSHSWTexture = Content.Load<Texture2D>("HazmatShootSW");
+            HazDeadTexture = Content.Load<Texture2D>("HazDead");
             BackgroudTexture = Content.Load<Texture2D>("400Danimated");
+            BackgroundTexture2 = Content.Load<Texture2D>("400Canimated");
+            BackgroundTexture3 = Content.Load<Texture2D>("LabFitting01");
             borderTexture = Content.Load<Texture2D>("Solid_red");
             bulletTexture = Content.Load<Texture2D>("Bullet2");
+            buttonUpTexture = Content.Load<Texture2D>("redbutton");
             shoot = Content.Load<SoundEffect>("Realistic Gunshot Sound Effect");
             ricochet = Content.Load<SoundEffect>("Bullet ricochet sound effect 2");
-            enemieTexture = Content.Load<Texture2D>("blueCreature");
+            empty = Content.Load<SoundEffect>("emptyGun");
+            button = Content.Load<SoundEffect>("Click");
+            intro = Content.Load<Song>("Doom");
+            enemyRTexture = Content.Load<Texture2D>("blueCreature");
+            enemyLTexture = Content.Load<Texture2D>("blueCreatureL");
+            enemyRunRTexture = Content.Load<Texture2D>("blueCreaturRunR");
+            enemyRunLTexture = Content.Load<Texture2D>("blueCreaturRunL");
+            buttonClick = Content.Load<Texture2D>("redButtonPushed");
 
 
-            HazTexture = HazSTexture; 
+            HazTexture = HazSTexture;
             pTextures.Add(HazSTexture);//0
             pTextures.Add(HazUTexture);//1
             pTextures.Add(HazDTexture);//2
@@ -118,90 +175,293 @@ namespace FinalProject
             pTextures.Add(HazSHNWTexture);//14
             pTextures.Add(HazSHSETexture);//15
             pTextures.Add(HazSHSWTexture);//16
-            pTextures.Add(bulletTexture); //17
+            pTextures.Add(HazDeadTexture);//17
+            pTextures.Add(bulletTexture); //18
+            
+            
+            enemyTextures.Add(enemyRTexture);
+            enemyTextures.Add(enemyLTexture);
+            enemyTextures.Add(enemyRunRTexture);
+            enemyTextures.Add(enemyRunLTexture);
 
 
-            CollisionTextures.Add(new Rectangle(0, 0, 450, 15));
-            CollisionTextures.Add(new Rectangle(320, 465, 500, 15));
-            CollisionTextures.Add(new Rectangle(425, 0, 400, 200));
-            CollisionTextures.Add(new Rectangle(0, 350, 320, 200));
+            CollisionTextures.Add(new Rectangle(0, 0, 675, 22));
+            CollisionTextures.Add(new Rectangle(480, 697, 750, 22));
+            CollisionTextures.Add(new Rectangle(637, 0, 600, 300));
+            CollisionTextures.Add(new Rectangle(0, 525, 480, 300));
             //objects
+
+            CollisionTextures.Add(new Rectangle(0, 262, 45, 1));
+            CollisionTextures.Add(new Rectangle(0, 435, 45, 1));
+            CollisionTextures.Add(new Rectangle(720, 412, 150, 1));
+            CollisionTextures.Add(new Rectangle(720, 555, 150, 1));
+            CollisionTextures.Add(new Rectangle(540, 607, 105, 1));
+            CollisionTextures.Add(new Rectangle(1020, 412, 250, 1));
+            CollisionTextures.Add(new Rectangle(1020, 555, 250, 1));
+            CollisionTextures.Add(new Rectangle(500, 220, 5, 5));
+            CollisionTextures.Add(new Rectangle(405, 330, 5, 5));
+            CollisionTextures.Add(new Rectangle(157, 352, 112, 1));
+            CollisionTextures.Add(new Rectangle(157, 180, 112, 1));//15
+
+            CollisionTextures.Add(new Rectangle(0, 0, 250, 100));
+            CollisionTextures.Add(new Rectangle(250, 0, 275, 50));
+            CollisionTextures.Add(new Rectangle(525, 0, 400, 25));
+            CollisionTextures.Add(new Rectangle(865, 0, 400, 50));
+            CollisionTextures.Add(new Rectangle(0, 250, 90, 250));
+            CollisionTextures.Add(new Rectangle(80, 460, 80, 5));
+            CollisionTextures.Add(new Rectangle(320, 460, 80, 5));
+            CollisionTextures.Add(new Rectangle(400, 250, 800, 250));
+            CollisionTextures.Add(new Rectangle(870, 460, 400, 250));
+            CollisionTextures.Add(new Rectangle(250, 650, 400, 200));
+
+            CollisionTextures.Add(new Rectangle(250, 650, 400, 200));
+
+
+
+            BackgroundRect = new Rectangle(0, 0, 1200, 720);
+            
            
-            CollisionTextures.Add(new Rectangle(0, 175, 30, 1));
-            CollisionTextures.Add(new Rectangle(0, 290, 30, 1));
-            CollisionTextures.Add(new Rectangle(330, 155, 1, 1));
-            CollisionTextures.Add(new Rectangle(270, 220, 1, 1));
-            CollisionTextures.Add(new Rectangle(480, 275, 100, 1));
-            CollisionTextures.Add(new Rectangle(480, 370, 100, 1));
-            CollisionTextures.Add(new Rectangle(360, 405, 70, 1));
-            CollisionTextures.Add(new Rectangle(680, 275, 100, 1));
-            CollisionTextures.Add(new Rectangle(680, 370, 100, 1));
-            CollisionTextures.Add(new Rectangle(105, 235, 75, 1));
-            CollisionTextures.Add(new Rectangle(105, 120, 75, 1));
-
-
-
-            BackgroundRect = new Rectangle(0, 0, 800, 480);
-            enemiesList.Add(new Enemies(enemieTexture, new Vector2(340, 340)));
-
-
         }
-
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+                MediaPlayer.Stop();
                 Exit();
+            }
+                
             
 
             keyboardState = Keyboard.GetState();
             prevMouseState = mouseState;
             mouseState = Mouse.GetState();
 
-            seconds = (float)gameTime.TotalGameTime.TotalSeconds - startTime;
-           
-            if (seconds > 2) // Takes a timestamp every 10 seconds.
-                startTime = (float)gameTime.TotalGameTime.TotalSeconds;
+            
 
 
-            System.Diagnostics.Debug.WriteLine(seconds.ToString());
-
-            foreach (Enemies enemy in enemiesList)
+            if (mouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released)
             {
-                enemy.Update(new Vector2(player.Bounds.X, player.Bounds.Y), CollisionTextures);
 
+                if (buttonRect.Contains(mouseState.Position))
+                {
+                    delay = true;
+                    delayTimer = delayDuration;
+                    button.Play();
+                    buttonTexture = buttonClick;
+                    
+                }
             }
-
-            player.Update(keyboardState, prevMouseState, mouseState, projectileList, CollisionTextures,shoot,ricochet);
-
-            foreach (Projectile projectile in projectileList)
+            if (delay)
             {
-                projectile.Kill(enemiesList);
+                // Decrease the delay timer
+                delayTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                // Check if the delay timer has reached zero or below
+                if (delayTimer <= 0)
+                {
+                    // Perform the screen change
+                    screen = Screen.platform1;
+
+                    // Reset the delay
+                    delay = false;
+                    delayTimer = 0.0f;
+                }
+            }
+            if (screen == Screen.platform1 || screen == Screen.platform2 || screen == Screen.platform3)
+            {
+                seconds = (float)gameTime.TotalGameTime.TotalSeconds - startTime;
+                if (seconds > 5) // Takes a timestamp every 10 seconds.
+                    startTime = (float)gameTime.TotalGameTime.TotalSeconds;
+
+                //System.Diagnostics.Debug.WriteLine(enemyKills.ToString());
+
+                foreach (Enemies enemy in enemiesList)
+                {
+                    enemy.Update(new Vector2(player.Bounds.X, player.Bounds.Y), CollisionTextures,gameTime, player);
+
+                }
+
+                player.Update(keyboardState, prevMouseState, mouseState, projectileList, CollisionTextures, shoot, ricochet, empty,screenOn,damage );
+
+
+                
+
+                Debug.Print(enemiesList.Count.ToString());
+
+                spawnInterval = (float)gameTime.TotalGameTime.TotalSeconds - spawnTimer;
+                if (spawnInterval > 5) // Takes a timestamp every 10 seconds.
+                    spawnTimer = (float)gameTime.TotalGameTime.TotalSeconds;
+
+                if (spawnInterval <= 0.1 )
+                {
+
+                    Vector2 spawnLocation = Enemies.GetRandomSpawnLocation(new Rectangle(0, 0, 1200, 720), CollisionTextures, 80, 80);
+                    enemiesList.Add(new Enemies(enemyTextures, spawnLocation));
+
+                }
+               
+                if (enemyKills > 2 && enemyKills < 3)
+                {
+                    screen = Screen.platform2;
+                    if (!looped)
+                    {
+                        for (int i = 0; i < 15; i++)
+                        {
+                            CollisionTextures.RemoveAt(0);
+                            looped = true;
+                        }
+                    }
+
+                    screenOn = 2;
+                    looped = false;
+
+                }
+                if (enemyKills > 3)
+                {
+                    projectileList.Clear();
+                    screen = Screen.platform3;
+                    if (!looped)
+                    {
+                        for (int i = 0; i < 10; i++)
+                        {
+                            CollisionTextures.RemoveAt(0);
+                           
+                            foreach (Enemies enemy in enemiesList)
+                            {
+                                enemy.height = 36;
+                                enemy.Width = 36;
+                            }
+                            foreach (Projectile bullet in projectileList)
+                            {
+                                bullet.height = 7;
+                                bullet.Width = 7;
+                            }
+                            looped = true;
+                        }
+                    }
+
+                    screenOn = 3;
+                }
+                if (projectileList.Count > 0)
+                {
+                    for (int i = 0; i < enemiesList.Count; i++)
+                    {
+                        for (int k = 0; k < projectileList.Count; k++)
+                        {
+                            if (enemiesList.Count > 0 && projectileList[k].Rect1.Intersects(enemiesList[i].Rect))
+                            {
+                                enemiesList.RemoveAt(i);
+                                enemyKills++;
+                                i--;
+                                projectileList.RemoveAt(k);
+                                k--;
+                                enemyKills++;
+                                break;
+                            }
+                           
+                        }
+                        
+                    }
+                }
+
+                for (int i = 0; i < enemiesList.Count; i++)
+                {
+                    if (enemiesList[i].Rect.Intersects(player.Bounds))
+                    {
+                        damage++;
+                    }
+                }
+                if (damage >= 3)
+                {
+                    HazTexture = pTextures[18];
+                }
+
+
             }
             
+            
+
+
+
+
+
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.DarkSlateGray);
 
             _spriteBatch.Begin();
-            _spriteBatch.Draw(BackgroudTexture, BackgroundRect, Color.White);
-            player.Draw(_spriteBatch);
-            foreach (Enemies enemies in enemiesList)
+            if (screen == Screen.Intro)
             {
-                enemies.Draw(_spriteBatch);
+               
+                _spriteBatch.Draw(buttonTexture, new Rectangle(375, 135, 450, 450), Color.White);
+               
+                
+
+                
 
             }
-            foreach (Projectile bullet in projectileList)
+            if (screen == Screen.platform1)
             {
-                bullet.Draw(_spriteBatch);
+                _spriteBatch.Draw(BackgroudTexture, BackgroundRect, Color.White);
+                player.Draw(_spriteBatch);
+                _spriteBatch.Draw(borderTexture,doorRect, Color.White);
+                foreach (Enemies enemies in enemiesList)
+                {
+                    enemies.Draw(_spriteBatch);
+
+                }
+                foreach (Projectile bullet in projectileList)
+                {
+                    bullet.Draw(_spriteBatch);
+                }
+                //for (int i = 0; i < 15; i++) 
+                //{
+                //    _spriteBatch.Draw(borderTexture, CollisionTextures[i], Color.White);
+                //}
+
             }
-            //foreach (Rectangle borders in CollisionTextures)
-            //{
-            //    _spriteBatch.Draw(borderTexture, borders, Color.White);
-            //}
+            if (screen == Screen.platform2)
+            {
+                _spriteBatch.Draw(BackgroundTexture2, BackgroundRect, Color.White);
+                player.Draw(_spriteBatch);
+                foreach (Enemies enemies in enemiesList)
+                {
+                    enemies.Draw(_spriteBatch);
+
+                }
+                foreach (Projectile bullet in projectileList)
+                {
+                    bullet.Draw(_spriteBatch);
+                }
+                //for (int i = 0;i < CollisionTextures.Count;i++) 
+                //{
+                //   _spriteBatch.Draw(borderTexture, CollisionTextures[i], Color.White);
+                //}
+            }
+            if (screen == Screen.platform3)
+            {
+                _spriteBatch.Draw(BackgroundTexture3, BackgroundRect, Color.White);
+                player.Draw(_spriteBatch);
+                foreach (Enemies enemies in enemiesList)
+                {
+                    enemies.Draw(_spriteBatch);
+
+                }
+                foreach (Projectile bullet in projectileList)
+                {
+                    bullet.Draw(_spriteBatch);
+                }
+                for (int i = 0; i < CollisionTextures.Count; i++)
+                {
+                    _spriteBatch.Draw(borderTexture, CollisionTextures[i], Color.White);
+                }
+            }
+
+
             _spriteBatch.End();
 
             base.Draw(gameTime);
