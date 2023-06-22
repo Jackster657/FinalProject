@@ -16,6 +16,7 @@ namespace FinalProject
         private Vector2 _position;
         private Vector2 _velocity;
         private Rectangle _bulletRect;
+        private int _enemyKills;
 
             
         public Projectile(Texture2D texture, Vector2 position, Vector2 velocity)
@@ -36,19 +37,36 @@ namespace FinalProject
             
             
         }
-        public bool Collision(List<Rectangle> items)
+        public bool Collision(List<Rectangle> items, int screen)
         {
-            _bulletRect = (new Rectangle((int)Math.Round(_position.X), (int)Math.Round(_position.Y), 15, 15));
-            for (int i = 0; i < 13; i++)
+            if (screen == 1)
             {
-                if (_bulletRect.Intersects(items[i]))
+                _bulletRect = (new Rectangle((int)Math.Round(_position.X), (int)Math.Round(_position.Y), 15, 15));
+                for (int i = 0; i < 13; i++)
                 {
-                    return true;
+                    if (_bulletRect.Intersects(items[i]))
+                    {
+                        return true;
+                    }
+
+                }
+                
+            }
+            if (screen == 2)
+            {
+                _bulletRect = (new Rectangle((int)Math.Round(_position.X), (int)Math.Round(_position.Y), 15, 15));
+                for (int i = 0; i < items.Count; i++)
+                {
+                    if (_bulletRect.Intersects(items[i]))
+                    {
+                        return true;
+                    }
+
                 }
 
             }
             return false;
-            
+
         }
 
         public void Kill(List<Enemies> enemies)
@@ -58,14 +76,20 @@ namespace FinalProject
                 if (_bulletRect.Intersects(enemies[i].Rect))
                 {
                     enemies.RemoveAt(i);
+                    _enemyKills++;
                     i--;
                 }
             }
         }
+        public int kills
+        {
+            get { return _enemyKills; }
+            set { _enemyKills = value; }
+        }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-                spriteBatch.Draw(_texture, new Rectangle((int)Math.Round(_position.X), (int)Math.Round(_position.Y), 15, 15), Color.White);
+                spriteBatch.Draw(_texture, new Rectangle((int)Math.Round(_position.X), (int)Math.Round(_position.Y), 22, 22), Color.White);
         }
     }
 

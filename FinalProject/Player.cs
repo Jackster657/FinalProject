@@ -5,13 +5,14 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FinalProject
 {
-    internal class Player
+    public class Player
     {
         private List<Texture2D> _playerTextures;
         private Texture2D _playerSkin;
@@ -22,6 +23,7 @@ namespace FinalProject
         private Projectile _projectile;
         private Texture2D _bulletTexture;
         private List<Rectangle> _bulletRects;
+        private bool looped = false;
         float seconds;
         float startTime;
 
@@ -31,7 +33,7 @@ namespace FinalProject
         public Player(List<Texture2D> textures, int x, int y)
         {
             _playerTextures = textures;
-            _location = new Rectangle(x, y, 40, 60);
+            _location = new Rectangle(x, y, 60, 90);
             _speed = new Vector2();
             _bulletTexture = _playerTextures[_playerTextures.Count - 1];
         }
@@ -55,41 +57,66 @@ namespace FinalProject
         }
         
 
-        public void Move(KeyboardState keyboardState, List<Rectangle> items)
+        public void Move(KeyboardState keyboardState, List<Rectangle> items, int screen)
         {
             _speed = new Vector2();
             if (keyboardState.IsKeyDown(Keys.D))
             {
-                this._speed.X += 2;
+                this._speed.X += 3;
             }
             if (keyboardState.IsKeyDown(Keys.A))
             {
-                this._speed.X += -2;
+                this._speed.X += -3;
             }
             if (keyboardState.IsKeyDown(Keys.W))
             {
-                this._speed.Y += -2;
+                this._speed.Y += -3;
             }
             if (keyboardState.IsKeyDown(Keys.S))
             {
-                this._speed.Y += 2;
+                this._speed.Y += 3;
             }
             _location.X += (int)_speed.X;
             _location.Y += (int)_speed.Y;
-
-            for (int i = 0; i < items.Count; i++)
+            Debug.Print(screen.ToString());
+            if (screen == 1)
             {
-                if (_location.Intersects(items[i]))
+                for (int i = 0; i < 15; i++)
                 {
-                    UndoMove();
+                    if (_location.Intersects(items[i]))
+                    {
+                        UndoMove();
+
+                    }
+                    else if (_location.Top < 0 || _location.Bottom > 720 || _location.Left < 0 || _location.Right > 1200)
+                    {
+                        UndoMove();
+                    }
 
                 }
-                else if (_location.Top < 0 || _location.Bottom > 480 || _location.Left < 0 || _location.Right > 800)
-                {
-                    UndoMove();
-                }
-               
             }
+            else if (screen== 2) 
+            {
+                if (!looped)
+                {
+                    _location = new Rectangle(200, 200, 60, 90);
+                    looped = true;
+                }
+                for (int i = 0; i < items.Count; i++)
+                {
+                    if (_location.Intersects(items[i]))
+                    {
+                        UndoMove();
+
+                    }
+                    else if (_location.Top < 0 || _location.Bottom > 720 || _location.Left < 0 || _location.Right > 1200)
+                    {
+                        UndoMove();
+                    }
+
+                }
+            }
+            
                 
 
             
@@ -188,28 +215,28 @@ namespace FinalProject
             }
         }
     
-        public void Bullet(MouseState mouseState, MouseState prevMouseState, List<Projectile> bullets,  SoundEffect shoot)
+        public void Bullet(MouseState mouseState, MouseState prevMouseState, List<Projectile> bullets,  SoundEffect shoot,SoundEffect empty)
         {
             
             if (mouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released)
             {
+                
                 Vector2 playerCenter = new Vector2(_location.X + _location.Width / 2, (_location.Y + _location.Height / 2) - 20);
                 Vector2 mousePosition = new Vector2(mouseState.X, mouseState.Y);
                 Vector2 bulletDirection = mousePosition - playerCenter;
                 bulletDirection.Normalize();
-                bulletDirection.X *= 4.5f;
-                bulletDirection.Y *= 4.5f;
+                bulletDirection.X *= 6.75f;
+                bulletDirection.Y *= 6.75f;
 
-                if (bullets.Count < 7)
+                if (bullets.Count < 3)
                 {
                     bullets.Add(new Projectile(_bulletTexture, playerCenter, bulletDirection));
                     shoot.Play();
                 }
                 else
                 {
-                    //add empty sound
+                    empty.Play();
                 }
-                
                 
                 
                 
@@ -217,15 +244,27 @@ namespace FinalProject
 
         }
 
-        public void Update(KeyboardState keyboardState, MouseState prevMouseState, MouseState mouseState, List<Projectile> bullets, List<Rectangle> items, SoundEffect shoot, SoundEffect ricochet)
+        public void Update(KeyboardState keyboardState, MouseState prevMouseState, MouseState mouseState, List<Projectile> bullets, List<Rectangle> items, SoundEffect shoot, SoundEffect ricochet,SoundEffect empty, int screen)
         {
 
-            Move(keyboardState, items);
+            Move(keyboardState, items, screen);
             PickTexture(mouseState, prevMouseState);
             for (int i = 0; i < bullets.Count; i++)
             {
                 bullets[i].Update();
-                if (bullets[i].Collision(items))
+                if (bullets[i].Collision(items,screen))
+                {
+                    bullets.RemoveAt(i);
+                    ricochet.Play();
+                    i--;
+                }
+                else if (bullets[i].Rect1.Right > 1200)
+                {
+                    bullets.RemoveAt(i);
+                    ricochet.Play();
+                    i--;
+                }
+                else if (bullets[i].Rect1.Right < 0)
                 {
                     bullets.RemoveAt(i);
                     ricochet.Play();
@@ -234,7 +273,7 @@ namespace FinalProject
             }
 
 
-            Bullet(mouseState, prevMouseState, bullets, shoot);
+            Bullet(mouseState, prevMouseState, bullets, shoot, empty);
 
 
 
