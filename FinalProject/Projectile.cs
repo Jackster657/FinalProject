@@ -94,6 +94,11 @@ namespace FinalProject
             return false;
 
         }
+        public int kills
+        {
+            get { return _enemyKills; }
+            set { _enemyKills = value; }
+        }
 
         
         
